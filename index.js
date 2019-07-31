@@ -26,7 +26,8 @@ const MESSAGE = {
   IG_ATTACK: 'IG_ATTACK',
   IG_ATTACK_RESPONSE: 'IG_ATTACK_RESPONSE',
   IG_RESIGN: 'IG_RESIGN',
-  IG_ENDGAME: 'IG_ENDGAME'
+  IG_ENDGAME: 'IG_ENDGAME',
+  IG_CHAT: 'IG_CHAT'
 }
 const STATUS = {
   AVAILABLE: 'AVAILABLE',
@@ -174,6 +175,16 @@ io.on('connection', (socket) => {
     }
 
     io.to(user.status).emit(MESSAGE.IG_RESIGN);
+  });
+
+  //User chat
+  socket.on(MESSAGE.IG_CHAT, (text) => {
+    const user = users.find(item => item.id === socket.id);
+    if (!user || user.status === STATUS.AVAILABLE) {
+      return;
+    }
+
+    io.to(user.status).emit(MESSAGE.IG_CHAT, text);
   });
 
   // User end game
